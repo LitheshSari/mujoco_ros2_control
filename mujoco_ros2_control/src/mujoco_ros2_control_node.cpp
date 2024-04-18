@@ -6,11 +6,12 @@
 #include "mujoco_ros2_control/mujoco_rendering.hpp"
 
 // MuJoCo data structures
-mjModel* mujoco_model = nullptr;
-mjData* mujoco_data = nullptr;
+mjModel *mujoco_model = nullptr;
+mjData *mujoco_data = nullptr;
 
 // main function
-int main(int argc, const char** argv) {
+int main(int argc, const char **argv)
+{
 
   rclcpp::init(argc, argv);
   std::shared_ptr<rclcpp::Node> node = rclcpp::Node::make_shared("mujoco_ros2_control_node", rclcpp::NodeOptions().automatically_declare_parameters_from_overrides(true));
@@ -20,12 +21,16 @@ int main(int argc, const char** argv) {
 
   // load and compile model
   char error[1000] = "Could not load binary model";
-  if (std::strlen(model_path.c_str())>4 && !std::strcmp(model_path.c_str()+std::strlen(model_path.c_str())-4, ".mjb")) {
+  if (std::strlen(model_path.c_str()) > 4 && !std::strcmp(model_path.c_str() + std::strlen(model_path.c_str()) - 4, ".mjb"))
+  {
     mujoco_model = mj_loadModel(model_path.c_str(), 0);
-  } else {
+  }
+  else
+  {
     mujoco_model = mj_loadXML(model_path.c_str(), 0, error, 1000);
   }
-  if (!mujoco_model) {
+  if (!mujoco_model)
+  {
     mju_error("Load model error: %s", error);
   }
 
@@ -44,13 +49,15 @@ int main(int argc, const char** argv) {
   RCLCPP_INFO_STREAM(node->get_logger(), "Mujoco rendering has been successfully initialized !");
 
   // run main loop, target real-time simulation and 60 fps rendering
-  while (rclcpp::ok() && !rendering->is_close_flag_raised()) {
+  while (rclcpp::ok() && !rendering->is_close_flag_raised())
+  {
     // advance interactive simulation for 1/60 sec
     //  Assuming MuJoCo can simulate faster than real-time, which it usually can,
     //  this loop will finish on time for the next frame to be rendered at 60 fps.
     //  Otherwise add a cpu timer and exit this loop when it is time to render.
     mjtNum simstart = mujoco_data->time;
-    while (mujoco_data->time - simstart < 1.0/60.0) {
+    while (mujoco_data->time - simstart < 1.0 / 60.0)
+    {
       control.update();
     }
     rendering->update();

@@ -1,0 +1,50 @@
+<mujoco model="diff_drive">
+  <compiler angle="radian" meshdir="../urdf/"/>
+  <asset>
+        <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="512" />
+        <texture name="texplane" type="2d" builtin="checker" rgb1=".2 .3 .4" rgb2=".1 0.15 0.2" width="512" height="512" mark="cross" markrgb=".8 .8 .8" />
+        <material name="matplane" reflectance="0.3" texture="texplane" texrepeat="1 1" texuniform="true" />
+  </asset>
+
+  <default>
+     <joint type="hinge" limited="true"/>
+  </default>
+
+  <worldbody>
+    <light directional="true" diffuse=".4 .4 .4" specular="0.1 0.1 0.1" pos="0 0 5.0" dir="0 0 -1" castshadow="false" />
+    <light directional="true" diffuse=".6 .6 .6" specular="0.2 0.2 0.2" pos="0 0 4" dir="0 0 -1" />
+    <geom name="floor" type="plane" pos="0 0 0" size="15 15 1" material="matplane" margin="0.001" condim="3" friction="1 0.005 0.0001" />
+
+    <body name="chassis" pos="0 0 1">
+      <freejoint name="root"/>
+      <inertial pos="-0.151427 0 0.5" quat="0 0.707107 0 0.707107" mass="1.14395" diaginertia="0.481014 0.416519 0.126164"/>
+      <geom size="1.00571 0.5 0.284363" pos="-0.151427 0 0.5" type="box"/>
+      <geom size="1.00571 0.5 0.284363" pos="-0.151427 0 0.5" type="box" contype="0" conaffinity="0" group="1" density="0"/>
+      <body name="left_wheel" pos="0.554283 0.625029 0.3" quat="0.707141 -0.707073 0 0">
+        <inertial pos="0 0 0" mass="2" diaginertia="0.145833 0.145833 0.125"/>
+        <joint name="left_wheel_joint" pos="0 0 0" axis="0 0 1" limited="false" damping="0.2"/>
+        <geom size="0.3"/>
+        <geom size="0.3" contype="0" conaffinity="0" group="1" density="0"/>
+      </body>
+      <body name="right_wheel" pos="0.554283 -0.625029 0.3" quat="0.707141 -0.707073 0 0">
+        <inertial pos="0 0 0" mass="2" diaginertia="0.145833 0.145833 0.125"/>
+        <joint name="right_wheel_joint" pos="0 0 0" axis="0 0 1" limited="false" damping="0.2"/>
+        <geom size="0.3"/>
+        <geom size="0.3" contype="0" conaffinity="0" group="1" density="0"/>
+      </body>
+      <body name="caster" pos="-0.957138 0 0.2">
+        <inertial pos="-0.957138 0 0.2" mass="0.005" diaginertia="0.1 0.1 0.1"/>
+        <geom size="0.2"/>
+        <geom size="0.2" contype="0" conaffinity="0" group="1" density="0"/>
+      </body>
+    </body>
+  </worldbody>
+  <contact>
+      <exclude body1="chassis" body2="left_wheel" />
+      <exclude body1="chassis" body2="right_wheel" />
+  </contact>
+  <actuator>
+    <velocity name="Right_wheel_joint" joint="right_wheel_joint"/>
+    <velocity name="Left_wheel_joint" joint="left_wheel_joint"/>
+  </actuator>
+</mujoco>
