@@ -34,6 +34,8 @@ int main(int argc, const char **argv) {
   if (!mujoco_model) {
     mju_error("Load model error: %s", error);
   }
+  // set the time step of the to be 0.001s (make the simulation stable)
+  mujoco_model->opt.timestep = 0.001;
 
   RCLCPP_INFO_STREAM(node->get_logger(),
                      "Mujoco model has been successfully loaded !");
