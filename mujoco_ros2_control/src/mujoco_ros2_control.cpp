@@ -71,7 +71,6 @@ void MujocoRos2Control::init() {
       return;
     }
 
-    RCLCPP_INFO(logger_, "Loading hardware");
     resource_manager->import_component(std::move(mujoco_system), hardware);
 
     rclcpp_lifecycle::State state(
@@ -79,7 +78,7 @@ void MujocoRos2Control::init() {
         hardware_interface::lifecycle_state_names::ACTIVE);
     resource_manager->set_component_state(hardware.name, state);
   }
-
+  resource_manager->load_urdf(urdf_string, false, false);
   // Create the controller manager
   RCLCPP_INFO(logger_, "Loading controller_manager");
   cm_executor_ = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
@@ -112,7 +111,6 @@ void MujocoRos2Control::init() {
     }
   };
   cm_thread_ = std::thread(spin);
-  RCLCPP_INFO(logger_, "Init complete!");
 }
 
 void MujocoRos2Control::update() {
@@ -125,7 +123,7 @@ void MujocoRos2Control::update() {
   rclcpp::Time sim_time_ros(sim_time_sec, sim_time_nanosec, RCL_ROS_TIME);
   rclcpp::Duration sim_period = sim_time_ros - last_update_sim_time_ros_;
 
-  // publish_sim_time(sim_time_ros);
+  publish_sim_time(sim_time_ros);
 
   mj_step1(mj_model_, mj_data_);
 

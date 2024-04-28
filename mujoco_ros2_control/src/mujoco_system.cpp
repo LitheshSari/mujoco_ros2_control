@@ -137,8 +137,8 @@ MujocoSystem::write(const rclcpp::Time &time, const rclcpp::Duration &period) {
                  joint_state.joint_limits.max_velocity) {
         max_eff = 0.0;
       }
-      mj_data_->qfrc_applied[joint_state.mj_vel_adr] =
-          clamp(joint_state.effort_command, min_eff, max_eff);
+      double clamp_value = clamp(joint_state.effort_command, min_eff, max_eff);
+      mj_data_->qfrc_applied[joint_state.mj_vel_adr] = clamp_value;
     }
   }
 }
